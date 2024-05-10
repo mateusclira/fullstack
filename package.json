@@ -12,6 +12,10 @@
     "react-scripts": "4.0.3",
     "web-vitals": "^1.1.1"
   },
+  "devDependencies": {
+    "prettier": "^2.3.0", 
+    "eslint": "^7.32.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
