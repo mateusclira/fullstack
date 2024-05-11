@@ -68,16 +68,6 @@ jobs:
         name: build-artifacts
         path: ./build
 
-    - name: Set Environment Number and Bucket Name
-      run: |
-        if [[ "${{ github.ref }}" == "refs/heads/devel" ]]; then
-          echo "ENV_NUMBER=0" >> $GITHUB_ENV
-        elif [[ "${{ github.ref }}" == "refs/heads/stage" ]]; then
-          echo "ENV_NUMBER=1" >> $GITHUB_ENV
-        elif [[ "${{ github.ref }}" == "refs/heads/prod" ]]; then
-          echo "ENV_NUMBER=2" >> $GITHUB_ENV
-        fi
-
     - name: Download build artifacts
       uses: actions/download-artifact@v2
       with:
@@ -87,10 +77,10 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1.7.0
       with:
-        role-to-assume: arn:aws:iam::608636080729:role/githubActions
+        role-to-assume: ${{ secrets.GH_SERVICE_ROLE }}
         aws-region: us-east-1
         audience: sts.amazonaws.com
 
     - name: Deploy to S3
       run: |
-        aws s3 sync ./build s3://${{ env.ENV_NUMBER }}-fullstack --delete
+        aws s3 sync ./build s3://$(echo ${GITHUB_REF#refs/heads/})-fullstack --delete
