@@ -85,7 +85,7 @@ jobs:
       with:
         role-to-assume: arn:aws:iam::608636080729:role/githubActions
         aws-region: us-east-1
-        role-session-name: GitHub_to_AWS_via_FederatedOIDC
+        audience: sts.amazonaws.com
 
     - name: Deploy to S3
       run: |
