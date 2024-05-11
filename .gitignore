@@ -21,3 +21,46 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*.backup
+*.tfstate.backup
+
+# Crash log files
+crash.log
+
+# Exclude all .tfvars files, which might contain sensitive data, such as
+# password, private keys, and other secrets. Alternatively, consider using
+# .tfvars.example to share expected format without sharing sensitive data.
+*.tfvars
+*.tfvars.json
+
+# Ignore override files as they are usually used to override resources locally.
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
+# Ignore files that may contain system-specific or user-specific data
+.terraform.lock.hcl
+
+# Ignore any .log files that may be generated
+*.log
+
+# Ignore local executable binaries
+terraform.d/plugins/linux_amd64/*
+terraform.d/plugins/windows_amd64/*
+terraform.d/plugins/darwin_amd64/*
+
+# Ignore directories created by Terraform plugin cache
+plugin-cache
+
+*/.terraform/*
