@@ -5,11 +5,8 @@ permissions:
   contents: read
 
 on:
-  pull_request:
-    branches:
-      - devel
-      - stage
-      - prod
+  push:
+    branches: [devel,stage,prod]
 
 jobs:
   build:
