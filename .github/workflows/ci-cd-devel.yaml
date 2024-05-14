@@ -1,12 +1,12 @@
-name: rdiCidr CI
+name: Development Build and Deploy
 
 permissions:
   id-token: write
   contents: read
 
 on:
-  pull_request_target:
-    branches: [devel,stage,prod]
+  push: 
+    branches: [devel]
 
 jobs:
   build:
@@ -54,35 +54,32 @@ jobs:
         with:
           name: build-artifacts
           path: ./build
-
-  deploy-devel:
-    if: github.ref == 'refs/heads/devel'
+      
+  deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v2
-      with:
-        name: build-artifacts
-        path: ./build
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v2
-      with:
-        name: build-artifacts
-        path: ./build
-
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1.7.0
-      with:
-        role-to-assume: ${{ secrets.GH_SERVICE_ROLE }}
-        aws-region: us-east-1
-        audience: sts.amazonaws.com
-
-    - name: Deploy to S3
-      run: |
-        aws s3 sync ./build s3://${{ github.base_ref }}-fullstack --delete
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+  
+      - name: Download build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+          path: ./build
+  
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: ${{ secrets.GH_SERVICE_ROLE }}
+          aws-region: us-east-1
+          audience: sts.amazonaws.com
+  
+      - name: Upload build artifacts to S3
+        run: aws s3 cp ./build s3://build-artifacts-fullstack/build --recursive
+  
+      - name: Deploy to S3
+        run: |
+          aws s3 sync ./build s3://${{ github.base_ref }}-fullstack --delete
+          
