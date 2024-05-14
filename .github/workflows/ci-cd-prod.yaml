@@ -12,20 +12,23 @@ jobs:
   check-pr-source:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Check if PR is from stage branch to prod
-        if: github.base_ref == 'prod'
         run: |
-          if [[ "${{ github.head_ref }}" != "stage" ]]; then
-            echo "Pull requests to the 'prod' branch must come from the 'stage' branch."
+          PR_FROM_STAGE=$(git log -1 --pretty=format:'%s' | grep -c 'Merge pull request.*from stage')
+          if [ $PR_FROM_STAGE -eq 0 ]; then
+            echo "Deployments to the 'prod' branch must come from the 'stage' branch."
             exit 1
           fi
 
   deploy:
+    if: success()
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1.7.0
