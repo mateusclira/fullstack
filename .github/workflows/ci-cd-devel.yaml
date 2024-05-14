@@ -1,12 +1,12 @@
-name: rdiCidr CI
+name: Development Build and Deploy
 
 permissions:
   id-token: write
   contents: read
 
 on:
-  pull_request_target:
-    branches: [devel,stage,prod]
+  pull_request: 
+    branches: [devel]
 
 jobs:
   build:
@@ -54,9 +54,8 @@ jobs:
         with:
           name: build-artifacts
           path: ./build
-
-  deploy-devel:
-    if: github.ref == 'refs/heads/devel'
+      
+  deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -82,6 +81,9 @@ jobs:
         role-to-assume: ${{ secrets.GH_SERVICE_ROLE }}
         aws-region: us-east-1
         audience: sts.amazonaws.com
+
+    - name: Upload build artifacts to S3
+      run: aws s3 cp ./build s3://build-artifacts-fullstack/build --recursive
 
     - name: Deploy to S3
       run: |
