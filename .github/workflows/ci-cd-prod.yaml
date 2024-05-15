@@ -25,6 +25,7 @@ jobs:
 
   deploy:
     if: success()
+    needs: check-pr-source
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
